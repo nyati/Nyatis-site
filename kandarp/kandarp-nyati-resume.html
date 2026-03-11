@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kandarp Nyati — Engineering Leader</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --ink: #0e0e0e;
+      --paper: #f5f0e8;
+      --warm: #c8a96e;
+      --rust: #b85c38;
+      --slate: #3a4a5c;
+      --muted: #7a7468;
+      --line: rgba(14,14,14,0.12);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 18px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0.6;
+    }
+
+    header {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-left {
+      background: var(--slate);
+      color: var(--paper);
+      padding: 80px 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-left::before {
+      content: 'KN';
+      position: absolute;
+      top: -40px; left: -20px;
+      font-size: 320px;
+      font-weight: 600;
+      color: rgba(200,169,110,0.08);
+      line-height: 1;
+      letter-spacing: -20px;
+      pointer-events: none;
+    }
+
+    .header-right {
+      background: var(--warm);
+      padding: 80px 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+
+    .header-right::after {
+      content: '';
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 200px; height: 200px;
+      background: var(--rust);
+      clip-path: polygon(100% 0, 100% 100%, 0 100%);
+    }
+
+    .name-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--warm);
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.2s;
+    }
+
+    h1 {
+      font-size: clamp(52px, 6vw, 88px);
+      font-weight: 300;
+      line-height: 0.95;
+      letter-spacing: -2px;
+      color: var(--paper);
+      opacity: 0;
+      animation: fadeUp 0.9s ease forwards 0.4s;
+    }
+
+    h1 em { font-style: italic; color: var(--warm); display: block; }
+
+    .title-block {
+      margin-top: 40px;
+      padding-top: 40px;
+      border-top: 1px solid rgba(245,240,232,0.2);
+      opacity: 0;
+      animation: fadeUp 0.9s ease forwards 0.6s;
+    }
+
+    .title-block .role {
+      font-size: 12px;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 1px;
+      color: var(--warm);
+      margin-bottom: 8px;
+    }
+
+    .title-block .company {
+      font-size: 22px;
+      font-weight: 300;
+      color: var(--paper);
+      line-height: 1.3;
+    }
+
+    .right-content {
+      opacity: 0;
+      animation: fadeUp 0.9s ease forwards 0.7s;
+    }
+
+    .tagline {
+      font-size: clamp(26px, 3vw, 40px);
+      font-weight: 300;
+      line-height: 1.2;
+      color: var(--slate);
+      margin-bottom: 40px;
+    }
+
+    .tagline strong { font-weight: 600; display: block; }
+
+    .stats-row { display: flex; gap: 36px; margin-bottom: 50px; flex-wrap: wrap; }
+    .stat { display: flex; flex-direction: column; }
+
+    .stat-num {
+      font-size: 48px;
+      font-weight: 300;
+      line-height: 1;
+      color: var(--slate);
+    }
+
+    .stat-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--slate);
+      opacity: 0.7;
+    }
+
+    .location-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--slate);
+      border: 1px solid var(--slate);
+      padding: 8px 16px;
+    }
+
+    .location-badge::before { content: '◆'; font-size: 8px; color: var(--rust); }
+
+    main { max-width: 1200px; margin: 0 auto; padding: 0 60px; }
+
+    .section {
+      padding: 80px 0;
+      border-bottom: 1px solid var(--line);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .section.will-animate { opacity: 0; transform: translateY(30px); }
+    .section.visible { opacity: 1 !important; transform: translateY(0) !important; }
+
+    .section-header { display: flex; align-items: baseline; gap: 20px; margin-bottom: 60px; }
+
+    .section-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--rust);
+    }
+
+    .section-title { font-size: clamp(32px, 4vw, 52px); font-weight: 300; letter-spacing: -1px; }
+    .section-title em { font-style: italic; color: var(--warm); }
+
+    .about-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 60px; align-items: start; }
+
+    .about-text p { font-size: 20px; font-weight: 300; line-height: 1.8; margin-bottom: 20px; }
+    .about-text p strong { font-weight: 600; }
+
+    .patents-block { margin-top: 30px; padding: 28px; border: 1px solid var(--line); background: white; }
+
+    .patents-block h3 {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--rust);
+      margin-bottom: 16px;
+    }
+
+    .patent-item {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--slate);
+      line-height: 1.5;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      gap: 12px;
+    }
+
+    .patent-item:last-child { border-bottom: none; }
+    .patent-item::before { content: '⊕'; color: var(--warm); flex-shrink: 0; }
+
+    .aside-card { background: var(--slate); color: var(--paper); padding: 36px; }
+
+    .aside-card h3 {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--warm);
+      margin-bottom: 20px;
+    }
+
+    .aside-card ul { list-style: none; }
+
+    .aside-card ul li {
+      font-size: 14px;
+      font-weight: 300;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(245,240,232,0.1);
+      display: flex;
+      gap: 10px;
+    }
+
+    .aside-card ul li::before { content: '→'; color: var(--warm); font-size: 11px; flex-shrink: 0; }
+
+    .experience-list { display: flex; flex-direction: column; }
+
+    .exp-item {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 60px;
+      padding: 50px 0;
+      border-bottom: 1px solid var(--line);
+      position: relative;
+    }
+
+    .exp-item:last-child { border-bottom: none; }
+
+    .exp-item::before {
+      content: '';
+      position: absolute;
+      left: 199px; top: 0; bottom: 0;
+      width: 1px;
+      background: var(--line);
+    }
+
+    .exp-meta { padding-top: 6px; }
+
+    .exp-period {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: var(--rust);
+      margin-bottom: 8px;
+    }
+
+    .exp-company {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      line-height: 1.6;
+    }
+
+    .exp-role { font-size: 26px; font-weight: 300; letter-spacing: -0.5px; margin-bottom: 14px; line-height: 1.2; }
+
+    .exp-desc { font-size: 16px; font-weight: 300; color: var(--ink); line-height: 1.75; opacity: 0.85; }
+
+    .exp-bullets { margin-top: 14px; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+
+    .exp-bullets li {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--ink);
+      opacity: 0.85;
+      line-height: 1.6;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .exp-bullets li::before { content: '—'; position: absolute; left: 0; color: var(--warm); font-size: 12px; }
+
+    .exp-tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+
+    .tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 4px 11px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+    }
+
+    .tag.accent { border-color: var(--warm); color: var(--rust); background: rgba(200,169,110,0.08); }
+
+    .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+
+    .skill-card { background: white; padding: 34px; transition: background 0.3s ease; }
+    .skill-card:hover { background: var(--slate); }
+    .skill-card:hover .skill-name,
+    .skill-card:hover .skill-desc { color: var(--paper); }
+    .skill-card:hover .skill-icon { color: var(--warm); }
+
+    .skill-icon { font-size: 26px; margin-bottom: 14px; color: var(--warm); display: block; transition: color 0.3s; }
+    .skill-name { font-size: 19px; font-weight: 400; margin-bottom: 10px; transition: color 0.3s; }
+    .skill-desc { font-size: 14px; font-weight: 300; color: var(--muted); line-height: 1.6; transition: color 0.3s; }
+
+    .edu-row { display: flex; justify-content: space-between; align-items: baseline; padding: 34px 0; border-bottom: 1px solid var(--line); }
+    .edu-row:last-child { border-bottom: none; }
+    .edu-school { font-size: 26px; font-weight: 300; }
+    .edu-detail { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); text-align: right; line-height: 1.8; }
+
+    footer {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 80px 60px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: end;
+    }
+
+    footer h2 { font-size: clamp(36px, 5vw, 70px); font-weight: 300; line-height: 1; letter-spacing: -2px; margin-bottom: 24px; }
+    footer h2 em { font-style: italic; color: var(--warm); }
+
+    .footer-links { display: flex; flex-direction: column; align-self: start; }
+
+    .footer-link {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      text-decoration: none;
+      color: var(--paper);
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 1px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(245,240,232,0.1);
+      transition: color 0.2s;
+    }
+
+    .footer-link:hover { color: var(--warm); }
+
+    .footer-link span { font-size: 10px; color: var(--warm); letter-spacing: 2px; text-transform: uppercase; min-width: 70px; }
+
+    .copyright { margin-top: 60px; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 2px; color: rgba(245,240,232,0.25); text-transform: uppercase; grid-column: 1 / -1; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 900px) {
+      header { grid-template-columns: 1fr; min-height: auto; }
+      .header-left, .header-right { padding: 60px 40px; }
+      .about-grid { grid-template-columns: 1fr; gap: 40px; }
+      .exp-item { grid-template-columns: 1fr; gap: 12px; }
+      .exp-item::before { display: none; }
+      .skills-grid { grid-template-columns: 1fr 1fr; }
+      .edu-row { flex-direction: column; gap: 8px; }
+      .edu-detail { text-align: left; }
+      footer { grid-template-columns: 1fr; }
+      main { padding: 0 30px; }
+    }
+
+    @media (max-width: 560px) {
+      .skills-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── iOS / system dark mode ── */
+    @media (prefers-color-scheme: dark) {
+
+      /* Page background & default text */
+      body { background: #181510; color: #ede8de; }
+
+      /* ---- HEADER ---- */
+      /* Left panel: keep dark navy, name must be bright */
+      .header-left { background: #111823; }
+      h1 { color: #ede8de; }
+      h1 em { color: #d4a96e; }
+      .name-tag { color: #d4a96e; }
+      .title-block { border-top-color: rgba(237,232,222,0.15); }
+      .title-block .role { color: #d4a96e; }
+      .title-block .company { color: #ede8de; }
+
+      /* Right panel: darker gold background so slate text is readable */
+      .header-right { background: #3a2e18; }
+      .header-right::after { background: #7a2e10; }
+      .tagline { color: #ede8de; }
+      .tagline strong { color: #ffffff; }
+      .stat-num { color: #ede8de; }
+      .stat-label { color: rgba(237,232,222,0.65); }
+      .location-badge { color: #ede8de; border-color: rgba(237,232,222,0.5); }
+
+      /* ---- MAIN BODY ---- */
+      main { background: #181510; }
+
+      /* Section borders */
+      .section { border-bottom-color: rgba(237,232,222,0.1); }
+      .section-num { color: #e07a50; }
+      .section-title { color: #ede8de; }
+      .section-title em { color: #d4a96e; }
+
+      /* About text */
+      .about-text p { color: #ede8de; }
+
+      /* Patents block */
+      .patents-block { background: #221e14; border-color: rgba(237,232,222,0.1); }
+      .patents-block h3 { color: #e07a50; }
+      .patent-item { color: #c8bfb0; border-bottom-color: rgba(237,232,222,0.08); }
+      .patent-item::before { color: #d4a96e; }
+
+      /* Aside card (skills list) */
+      .aside-card { background: #111823; }
+      .aside-card h3 { color: #d4a96e; }
+      .aside-card ul li { color: #ede8de; border-bottom-color: rgba(237,232,222,0.08); }
+      .aside-card ul li::before { color: #d4a96e; }
+
+      /* Cert + language blocks */
+      .rust-block { background: #5a2810 !important; }
+      .lang-block { background: #221e14 !important; border-color: rgba(237,232,222,0.1) !important; }
+
+      /* Experience */
+      .exp-item { border-bottom-color: rgba(237,232,222,0.1); }
+      .exp-item::before { background: rgba(237,232,222,0.08); }
+      .exp-period { color: #e07a50; }
+      .exp-company { color: #a09888; }
+      .exp-role { color: #ede8de; }
+      .exp-desc { color: #c8bfb0; }
+      .exp-bullets li { color: #c8bfb0; }
+      .exp-bullets li::before { color: #d4a96e; }
+      .tag { color: #a09888; border-color: rgba(237,232,222,0.15); background: transparent; }
+      .tag.accent { color: #e07a50; border-color: #d4a96e; background: rgba(212,169,110,0.1); }
+
+      /* Skills grid */
+      .skill-card { background: #221e14; }
+      .skill-icon { color: #d4a96e; }
+      .skill-name { color: #ede8de; }
+      .skill-desc { color: #a09888; }
+      .skill-card:hover { background: #111823; }
+      .skill-card:hover .skill-name { color: #ede8de; }
+      .skill-card:hover .skill-desc { color: #c8bfb0; }
+      .skill-card:hover .skill-icon { color: #d4a96e; }
+
+      /* Education */
+      .edu-row { border-bottom-color: rgba(237,232,222,0.1); }
+      .edu-school { color: #ede8de; }
+      .edu-detail { color: #a09888; }
+
+      /* Footer */
+      footer { background: #0c0b08; color: #ede8de; }
+      footer h2 { color: #ede8de; }
+      footer h2 em { color: #d4a96e; }
+      footer p { color: rgba(237,232,222,0.55) !important; }
+      .footer-link { color: #c8bfb0; border-bottom-color: rgba(237,232,222,0.1); }
+      .footer-link span { color: #d4a96e; }
+      .footer-link:hover { color: #d4a96e; }
+      .copyright { color: rgba(237,232,222,0.2); }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="name-tag">Engineering Leader · San Jose, California</div>
+    <h1>Kandarp<em>Nyati</em></h1>
+    <div class="title-block">
+      <div class="role">Currently — Sr. Software Engineering Manager, OTA Cloud</div>
+      <div class="company">Rivian & Volkswagen<br/>Group Technologies</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="right-content">
+      <p class="tagline">
+        Building systems that scale.<br/>
+        <strong>Leading teams that ship.</strong>
+      </p>
+      <div class="stats-row">
+        <div class="stat">
+          <span class="stat-num">15+</span>
+          <span class="stat-label">Years Exp.</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">300%</span>
+          <span class="stat-label">Org Growth</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">2</span>
+          <span class="stat-label">Patents</span>
+        </div>
+      </div>
+      <div class="location-badge">Palo Alto · San Jose, CA</div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="section" id="about">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2 class="section-title">About <em>Me</em></h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>Dynamic Engineering Leader with <strong>15+ years of experience</strong> delivering cutting-edge technology solutions across automotive OTA, streaming media, smart home, and e-commerce personalisation.</p>
+        <p>Proven track record in <strong>leading startups, building strategic partnerships</strong>, and driving technology adoption at scale. Passionate about expanding impactful innovations through collaboration and strategic execution.</p>
+        <p>A rare dual-track leader — founding engineer turned Head of Engineering turned Senior Product Manager — I bring deep technical credibility to every strategic conversation and sharp product instincts to every architectural decision.</p>
+
+        <div class="patents-block">
+          <h3>Patents</h3>
+          <div class="patent-item">Camera power management by a network hub with artificial intelligence</div>
+          <div class="patent-item">Battery powered cameras with AI and intelligent power management on a local hub</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="aside-card">
+          <h3>Top Skills</h3>
+          <ul>
+            <li>People Leadership</li>
+            <li>Technical Leadership</li>
+            <li>Engineering Management</li>
+            <li>Cross-Functional Alignment</li>
+            <li>Distributed Systems</li>
+            <li>OTA Platform Architecture</li>
+            <li>Voice / Conversational AI</li>
+            <li>Agile & Retrospectives</li>
+            <li>Career Pathing & Mentoring</li>
+            <li>Product Management</li>
+          </ul>
+        </div>
+
+        <div class="rust-block" style="background:var(--rust);color:var(--paper);padding:28px;margin-top:2px;">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(245,240,232,0.6);margin-bottom:10px;">Certification</div>
+          <div style="font-size:15px;font-weight:300;line-height:1.5;">Triplebyte Certified<br/><strong>Generalist Senior Software Engineer</strong></div>
+        </div>
+
+        <div class="lang-block" style="background:white;padding:28px;margin-top:2px;border:1px solid var(--line);">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--rust);margin-bottom:10px;">Languages</div>
+          <div style="font-size:15px;font-weight:300;color:var(--slate);line-height:1.8;">English — Native or Bilingual<br/>Hindi — Native or Bilingual</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="experience">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2 class="section-title"><em>Experience</em></h2>
+    </div>
+    <div class="experience-list">
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-period">May 2025 — Present</div>
+          <div class="exp-company">Rivian &<br/>Volkswagen Group<br/>Technologies<br/>Palo Alto, CA</div>
+        </div>
+        <div class="exp-content">
+          <div class="exp-role">Senior Software Engineering Manager, OTA Cloud</div>
+          <p class="exp-desc">Leading the strategic expansion and architectural evolution of a global Over-the-Air platform, building a high-trust culture while transforming a legacy single-tenant system into a robust multi-brand ecosystem.</p>
+          <ul class="exp-bullets">
+            <li>Grew a high-performing engineering org by over <strong>300%</strong> across the US and Europe within the first year.</li>
+            <li>Led the architectural pivot from single-brand to multi-brand, multi-entity, multi-tenant OTA platform — enabling enterprise-wide scalability.</li>
+            <li>Eliminated critical systemic bottlenecks, significantly increasing capacity for high-concurrency updates across a massive global fleet.</li>
+            <li>Achieved a <strong>15% increase in internal promotions</strong>, developing several new Tech Leads through personalised career pathing.</li>
+            <li>Fostered a psychologically safe, remote-first culture across international time zones with high engagement scores.</li>
+          </ul>
+          <div class="exp-tag-row">
+            <span class="tag accent">OTA Platform</span>
+            <span class="tag accent">Multi-Tenant Architecture</span>
+            <span class="tag accent">Mgmt of Managers</span>
+            <span class="tag">Distributed Systems</span>
+            <span class="tag">Global Teams</span>
+            <span class="tag">EV / Automotive</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-period">Aug 2020 — Apr 2025</div>
+          <div class="exp-company">Roku<br/>(4 yrs 9 mos)<br/>San Jose, CA</div>
+        </div>
+        <div class="exp-content">
+          <div class="exp-role">Engineering Leader — Voice Services & Smart Home Platform</div>
+          <p class="exp-desc">Led engineering for Roku's Voice Orchestration System and later the Smart Home Platform. Responsible for systems handling voice queries at scale, integrating speech recognition, NLP, search, and AI systems.</p>
+          <ul class="exp-bullets">
+            <li>End-to-end delivery of large cross-functional projects as Engineering DRI (eDRI).</li>
+            <li>Led cross-team architectural discussions and drove timely technical decisions.</li>
+            <li>Scoped and prioritised features across multiple product lines.</li>
+            <li>Hired and grew a geographically distributed engineering team.</li>
+          </ul>
+          <div class="exp-tag-row">
+            <span class="tag accent">Voice AI</span>
+            <span class="tag accent">Conversational AI</span>
+            <span class="tag accent">Smart Home</span>
+            <span class="tag">NLP</span>
+            <span class="tag">Speech Recognition</span>
+            <span class="tag">eDRI</span>
+            <span class="tag">Streaming</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-period">Apr 2017 — Aug 2020</div>
+          <div class="exp-company">Deep Sentinel<br/>(3 yrs 5 mos)<br/>Pleasanton, CA</div>
+        </div>
+        <div class="exp-content">
+          <div class="exp-role">Head of Engineering (Applications) & Technical Lead</div>
+          <p class="exp-desc">Founding engineer who grew into Head of Engineering. Managed 10+ engineers across a US/Taiwan onshore-offshore model covering Mobile Apps, Internal Dashboards, and Surveillance/Monitoring systems.</p>
+          <ul class="exp-bullets">
+            <li>Patented AI-powered camera power management using hub-based inference to classify objects for extended battery life.</li>
+            <li>Designed data pipeline using React, Python, and GraphQL for image data flowing from production into human-in-the-loop data science training.</li>
+            <li>Built a scalable OTA update system for wireless hardware updates.</li>
+            <li>Architected end-to-end sales and subscription workflow managing orders, payments, and service lifecycle via async and sync vendor models.</li>
+          </ul>
+          <div class="exp-tag-row">
+            <span class="tag accent">Founding Engineer</span>
+            <span class="tag accent">Patents</span>
+            <span class="tag accent">AI/ML</span>
+            <span class="tag">React</span>
+            <span class="tag">Python</span>
+            <span class="tag">GraphQL</span>
+            <span class="tag">OTA</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-period">Aug 2016 — Mar 2017</div>
+          <div class="exp-company">OpenX<br/>Menlo Park, CA</div>
+        </div>
+        <div class="exp-content">
+          <div class="exp-role">Senior Product Manager</div>
+          <p class="exp-desc">Worked with the technical team on the Cross Device Identification (XDI) initiative. Launched XDI in beta on Safari traffic and drove the Viewability measurement initiative to provide ad inventory transparency for buyers.</p>
+          <div class="exp-tag-row">
+            <span class="tag accent">Product Management</span>
+            <span class="tag">Ad Tech</span>
+            <span class="tag">Cross-Device ID</span>
+            <span class="tag">Programmatic Advertising</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-period">Jul 2012 — Jun 2016</div>
+          <div class="exp-company">RichRelevance<br/>(4 yrs)<br/>San Francisco, CA</div>
+        </div>
+        <div class="exp-content">
+          <div class="exp-role">Technical Lead & Senior Software Engineer</div>
+          <p class="exp-desc">Senior engineer on the core recommendations product (RichRecs). Led migration and integration of Intelligent Cross-Sells (ICS, acquired from CNET) into RichRelevance AWS infrastructure, and designed Advanced Merchandising for retail.</p>
+          <ul class="exp-bullets">
+            <li>Managed product and migrations of 45 ICS customers — 40+ live on the new platform within 60 days.</li>
+            <li>Acted as interim PM, defining roadmap, training, support, and customer onboarding for Advanced Merchandising.</li>
+          </ul>
+          <div class="exp-tag-row">
+            <span class="tag accent">Recommendations Engine</span>
+            <span class="tag accent">AWS</span>
+            <span class="tag">E-commerce Personalisation</span>
+            <span class="tag">Technical Lead</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-period">Feb 2012 — Jun 2012</div>
+          <div class="exp-company">Yahoo!<br/>Sunnyvale, CA</div>
+        </div>
+        <div class="exp-content">
+          <div class="exp-role">Software Engineer</div>
+          <p class="exp-desc">Designed architecture and database for the Yahoo! Content Platform onboarding tool. Collaborated with cloud technologies and provided solutions to internal clients for platform on-boarding.</p>
+          <div class="exp-tag-row">
+            <span class="tag">Content Platform</span>
+            <span class="tag">Cloud</span>
+            <span class="tag">Internal Tooling</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-period">May 2011 — Dec 2011</div>
+          <div class="exp-company">Yahoo!<br/>Sunnyvale, CA<br/>(Intern)</div>
+        </div>
+        <div class="exp-content">
+          <div class="exp-role">Technical Intern</div>
+          <p class="exp-desc">Created a portal for the Content Agility Solutions Team (Cloud Platform group) to create, track, and manage requests from internal customers using Bugzilla API for ticket generation (PHP, MySQL, HTML).</p>
+          <div class="exp-tag-row">
+            <span class="tag">PHP</span>
+            <span class="tag">MySQL</span>
+            <span class="tag">Bugzilla API</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-period">Jul 2007 — Jun 2010</div>
+          <div class="exp-company">L&T Infotech</div>
+        </div>
+        <div class="exp-content">
+          <div class="exp-role">Software Engineer</div>
+          <p class="exp-desc">Designed and implemented analytics on insurance claims and policy data to identify relevant patterns. Developed a highly scalable end-to-end insurance application and was awarded the Certificate of Customer Appreciation.</p>
+          <div class="exp-tag-row">
+            <span class="tag">Analytics</span>
+            <span class="tag">Insurance Tech</span>
+            <span class="tag">Scalable Systems</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="section" id="skills">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Skills &amp; <em>Craft</em></h2>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <span class="skill-icon">◈</span>
+        <div class="skill-name">Engineering Leadership</div>
+        <p class="skill-desc">Management of Managers, org scaling 300%+, performance frameworks, distributed team leadership across US and Europe.</p>
+      </div>
+      <div class="skill-card">
+        <span class="skill-icon">◉</span>
+        <div class="skill-name">OTA & Distributed Systems</div>
+        <p class="skill-desc">Architecting multi-tenant, multi-brand OTA platforms. Throughput optimisation for high-concurrency global fleet updates.</p>
+      </div>
+      <div class="skill-card">
+        <span class="skill-icon">◎</span>
+        <div class="skill-name">Voice & Conversational AI</div>
+        <p class="skill-desc">End-to-end voice orchestration at scale — integrating speech recognition, NLP, search, and AI systems for millions of queries.</p>
+      </div>
+      <div class="skill-card">
+        <span class="skill-icon">⬡</span>
+        <div class="skill-name">Product Management</div>
+        <p class="skill-desc">Cross-device advertising, e-commerce personalisation, and programmatic ad tech. Comfortable owning roadmaps without a PM in the room.</p>
+      </div>
+      <div class="skill-card">
+        <span class="skill-icon">◆</span>
+        <div class="skill-name">AI / ML Systems</div>
+        <p class="skill-desc">Two patents in AI-powered camera management. Human-in-the-loop image classification pipelines and hub-based real-time inference.</p>
+      </div>
+      <div class="skill-card">
+        <span class="skill-icon">○</span>
+        <div class="skill-name">People Development</div>
+        <p class="skill-desc">Personalised growth plans, 15% internal promotion uplift, psychologically safe cultures for remote-first international teams.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="education">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2 class="section-title"><em>Education</em></h2>
+    </div>
+    <div class="edu-row">
+      <div class="edu-school">University of Southern California</div>
+      <div class="edu-detail">M.S., Computer Science<br/>2010 — 2011 · Los Angeles, CA</div>
+    </div>
+    <div class="edu-row">
+      <div class="edu-school">Institute of Technology &amp; Management, Bhilwara</div>
+      <div class="edu-detail">B.E., Information Technology<br/>2003 — 2007</div>
+    </div>
+    <div class="edu-row">
+      <div class="edu-school">Mayo College, Ajmer</div>
+      <div class="edu-detail">High School<br/>1997 — 2003</div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div>
+    <h2>Let's build<br/><em>something</em><br/>great.</h2>
+    <p style="font-size:16px;font-weight:300;color:rgba(245,240,232,0.6);max-width:340px;line-height:1.7;">Open to conversations about engineering leadership, OTA platforms, voice AI, and the future of connected vehicles.</p>
+  </div>
+  <div>
+    <div class="footer-links">
+      <a href="https://linkedin.com/in/kandarpnyati" class="footer-link">
+        <span>LinkedIn</span>linkedin.com/in/kandarpnyati
+      </a>
+      <a href="https://github.com/nyati" class="footer-link">
+        <span>GitHub</span>github.com/nyati
+      </a>
+      <a href="/cdn-cgi/l/email-protection#99f2f7e0f8edf0d9ebf0eff0f8f7efeeb7edfcfaf1" class="footer-link">
+        <span>Email</span><span class="__cf_email__" data-cfemail="d2b9bcabb3a6bb92a0bba4bbb3bca4a5fca6b7b1ba">[email&#160;protected]</span>
+      </a>
+    </div>
+  </div>
+  <div class="copyright">© 2026 Kandarp Nyati — All rights reserved · Built with intention</div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  const sections = document.querySelectorAll('.section');
+  const observer = new 
