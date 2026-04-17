@@ -4,8 +4,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#070b12">
 <title>12-Week Transformation Plan</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #070b12;
@@ -27,9 +28,10 @@
     --phase2: #f59e0b;
     --phase3: #f87171;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; overflow-x: hidden; }
-  h1, h2, .bebas { font-family: 'Bebas Neue', sans-serif; letter-spacing: 1.5px; }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; color-scheme: dark; }
+  html { background: #070b12; }
+  body { background: #070b12; color: #e2e8f0; font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif; min-height: 100vh; overflow-x: hidden; }
+  h1, h2, .bebas { font-family: -apple-system, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif; letter-spacing: 1.5px; font-weight: 800; }
 
 /* HEADER */
 .header { background: linear-gradient(135deg, #0a0f1e 0%, #131a2e 100%); border-bottom: 1px solid var(–border); padding: 20px 16px 16px; position: sticky; top: 0; z-index: 100; }
@@ -45,7 +47,7 @@
 .tabs { background: var(–surface); border-bottom: 1px solid var(–border); position: sticky; top: 113px; z-index: 99; overflow-x: auto; scrollbar-width: none; }
 .tabs::-webkit-scrollbar { display: none; }
 .tabs-inner { display: flex; max-width: 480px; margin: 0 auto; min-width: max-content; }
-.tab { background: none; border: none; cursor: pointer; padding: 12px 16px; font-size: 13px; font-weight: 500; color: var(–text3); border-bottom: 2px solid transparent; white-space: nowrap; font-family: ‘DM Sans’, sans-serif; transition: all 0.2s; }
+.tab { background: #0d1321; border: none; cursor: pointer; padding: 12px 16px; font-size: 13px; font-weight: 500; color: #4a6180; border-bottom: 2px solid transparent; white-space: nowrap; font-family: -apple-system, ‘Helvetica Neue’, Arial, sans-serif; transition: all 0.2s; }
 .tab.active { color: var(–accent); border-bottom-color: var(–accent); }
 
 /* CONTENT */
@@ -59,9 +61,9 @@
 
 /* PHASE SELECTOR */
 .phase-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 16px; }
-.phase-btn { background: var(–surface); border: 2px solid var(–border); border-radius: 10px; padding: 10px 8px; cursor: pointer; text-align: left; transition: all 0.2s; }
-.phase-btn.active { background: rgba(249,115,22,0.08); border-color: var(–accent); }
-.phase-name { font-family: ‘Bebas Neue’; font-size: 18px; letter-spacing: 1px; }
+.phase-btn { background: #0d1321; border: 2px solid #1a2535; border-radius: 10px; padding: 10px 8px; cursor: pointer; text-align: left; transition: all 0.2s; color: #e2e8f0; }
+.phase-btn.active { background: rgba(249,115,22,0.08); border-color: #f97316; }
+.phase-name { font-family: -apple-system, ‘SF Pro Display’, ‘Helvetica Neue’, Arial, sans-serif; font-size: 18px; letter-spacing: 1px; font-weight: 800; }
 .phase-weeks { font-size: 10px; color: var(–text3); margin-top: 2px; }
 
 /* DAY CARDS */
@@ -94,13 +96,13 @@
 /* TRACKER */
 .week-selector { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 12px; scrollbar-width: none; }
 .week-selector::-webkit-scrollbar { display: none; }
-.week-btn { background: var(–surface); border: 1px solid var(–border); border-radius: 8px; padding: 7px 12px; font-size: 12px; cursor: pointer; white-space: nowrap; color: var(–text2); font-family: ‘DM Sans’; transition: all 0.2s; flex-shrink: 0; }
+.week-btn { background: var(–surface); border: 1px solid var(–border); border-radius: 8px; padding: 7px 12px; font-size: 12px; cursor: pointer; white-space: nowrap; color: var(–text2); font-family: -apple-system, ‘Helvetica Neue’, Arial, sans-serif; transition: all 0.2s; flex-shrink: 0; }
 .week-btn.active { background: rgba(249,115,22,0.12); border-color: var(–accent); color: var(–accent); font-weight: 600; }
 .week-btn.has-data { border-color: var(–green); color: var(–green); }
 .week-btn.active.has-data { border-color: var(–accent); color: var(–accent); }
 .day-selector { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 14px; scrollbar-width: none; }
 .day-selector::-webkit-scrollbar { display: none; }
-.day-sel-btn { background: var(–surface); border: 1px solid var(–border); border-radius: 8px; padding: 6px 11px; font-size: 11px; cursor: pointer; white-space: nowrap; color: var(–text2); font-family: ‘DM Sans’; transition: all 0.2s; flex-shrink: 0; }
+.day-sel-btn { background: var(–surface); border: 1px solid var(–border); border-radius: 8px; padding: 6px 11px; font-size: 11px; cursor: pointer; white-space: nowrap; color: var(–text2); font-family: -apple-system, ‘Helvetica Neue’, Arial, sans-serif; transition: all 0.2s; flex-shrink: 0; }
 .day-sel-btn.active { background: rgba(167,139,250,0.12); border-color: var(–purple); color: var(–purple); font-weight: 600; }
 .day-sel-btn.type-cardio.active { background: rgba(34,197,94,0.1); border-color: var(–green); color: var(–green); }
 .day-sel-btn.type-hiit.active { background: rgba(251,191,36,0.1); border-color: var(–yellow); color: var(–yellow); }
@@ -108,7 +110,7 @@
 .input-group { margin-bottom: 14px; }
 .input-label { font-size: 12px; color: var(–text2); margin-bottom: 6px; display: block; }
 .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.input-field { background: var(–surface2); border: 1px solid var(–border2); border-radius: 10px; padding: 10px 14px; font-size: 14px; color: var(–text); width: 100%; font-family: ‘DM Sans’; outline: none; transition: border-color 0.2s; }
+.input-field { background: var(–surface2); border: 1px solid var(–border2); border-radius: 10px; padding: 10px 14px; font-size: 14px; color: var(–text); width: 100%; font-family: -apple-system, ‘Helvetica Neue’, Arial, sans-serif; outline: none; transition: border-color 0.2s; }
 .input-field:focus { border-color: var(–accent); }
 .input-field::placeholder { color: var(–text3); }
 .ex-log-table { width: 100%; border-collapse: collapse; margin-top: 4px; }
@@ -117,20 +119,20 @@
 .ex-log-table th:not(:first-child) { text-align: center; width: 72px; }
 .ex-log-table td { padding: 5px 4px; border-top: 1px solid rgba(255,255,255,0.03); vertical-align: middle; }
 .ex-log-table td:first-child { font-size: 12px; color: var(–text2); padding-right: 8px; line-height: 1.3; }
-.ex-log-input { background: var(–surface2); border: 1px solid var(–border2); border-radius: 7px; padding: 6px 6px; font-size: 13px; color: var(–text); width: 68px; font-family: ‘DM Sans’; outline: none; text-align: center; transition: border-color 0.2s; }
+.ex-log-input { background: var(–surface2); border: 1px solid var(–border2); border-radius: 7px; padding: 6px 6px; font-size: 13px; color: var(–text); width: 68px; font-family: -apple-system, ‘Helvetica Neue’, Arial, sans-serif; outline: none; text-align: center; transition: border-color 0.2s; }
 .ex-log-input:focus { border-color: var(–accent); }
 .ex-log-input::placeholder { color: var(–text3); font-size: 11px; }
 .prescribed-tag { font-size: 10px; color: var(–text3); display: block; margin-top: 1px; }
-.save-btn { background: linear-gradient(135deg, var(–accent), #ef4444); border: none; border-radius: 12px; padding: 14px; width: 100%; font-size: 15px; font-weight: 700; color: #fff; cursor: pointer; font-family: ‘DM Sans’; letter-spacing: 0.5px; margin-top: 4px; transition: opacity 0.2s; }
+.save-btn { background: linear-gradient(135deg, var(–accent), #ef4444); border: none; border-radius: 12px; padding: 14px; width: 100%; font-size: 15px; font-weight: 700; color: #fff; cursor: pointer; font-family: -apple-system, ‘Helvetica Neue’, Arial, sans-serif; letter-spacing: 0.5px; margin-top: 4px; transition: opacity 0.2s; }
 .save-btn:active { opacity: 0.8; }
 .save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .save-status { text-align: center; font-size: 13px; margin-top: 10px; min-height: 20px; color: var(–green); }
 .sheets-setup { background: rgba(249,115,22,0.08); border: 1px solid rgba(249,115,22,0.25); border-radius: 12px; padding: 14px; margin-bottom: 16px; }
 .sheets-setup-title { font-size: 13px; font-weight: 600; color: var(–accent); margin-bottom: 8px; }
 .sheets-setup p { font-size: 12px; color: var(–text2); line-height: 1.6; }
-.sheets-url-input { background: var(–surface2); border: 1px solid var(–border2); border-radius: 10px; padding: 10px 14px; font-size: 12px; color: var(–text); width: 100%; font-family: ‘DM Sans’; outline: none; margin-top: 8px; }
+.sheets-url-input { background: var(–surface2); border: 1px solid var(–border2); border-radius: 10px; padding: 10px 14px; font-size: 12px; color: var(–text); width: 100%; font-family: -apple-system, ‘Helvetica Neue’, Arial, sans-serif; outline: none; margin-top: 8px; }
 .sheets-url-input:focus { border-color: var(–accent); }
-.config-btn { background: var(–surface2); border: 1px solid var(–border2); border-radius: 8px; padding: 8px 14px; font-size: 12px; color: var(–text2); cursor: pointer; font-family: ‘DM Sans’; margin-top: 8px; transition: all 0.2s; }
+.config-btn { background: var(–surface2); border: 1px solid var(–border2); border-radius: 8px; padding: 8px 14px; font-size: 12px; color: var(–text2); cursor: pointer; font-family: -apple-system, ‘Helvetica Neue’, Arial, sans-serif; margin-top: 8px; transition: all 0.2s; }
 .config-btn:hover { border-color: var(–accent); color: var(–accent); }
 .history-scroll { overflow-x: auto; margin-top: 8px; }
 .history-table { width: 100%; border-collapse: collapse; min-width: 340px; }
@@ -145,7 +147,7 @@
 .macro-card { background: linear-gradient(135deg, #0f1929, #131e30); border: 1px solid #1e3050; border-radius: 14px; padding: 18px; margin-bottom: 12px; }
 .macro-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 14px; }
 .macro-item { background: rgba(255,255,255,0.04); border-radius: 10px; padding: 12px 8px; text-align: center; }
-.macro-val { font-family: ‘Bebas Neue’; font-size: 26px; }
+.macro-val { font-family: -apple-system, ‘SF Pro Display’, ‘Helvetica Neue’, Arial, sans-serif; font-size: 26px; font-weight: 800; }
 .macro-lbl { font-size: 10px; color: var(–text3); margin-top: 2px; }
 .macro-bar-wrap { margin-bottom: 8px; }
 .macro-bar-label { display: flex; justify-content: space-between; font-size: 11px; color: var(–text2); margin-bottom: 4px; }
@@ -176,7 +178,7 @@
 .shop-item-name { font-size: 13px; color: var(–text); flex: 1; }
 .shop-item.checked .shop-item-name { text-decoration: line-through; color: var(–text3); }
 .shop-item-qty { font-size: 11px; color: var(–text3); }
-.clear-checks-btn { background: none; border: 1px solid var(–border); border-radius: 8px; padding: 8px 16px; font-size: 12px; color: var(–text3); cursor: pointer; font-family: ‘DM Sans’; margin-top: 8px; }
+.clear-checks-btn { background: none; border: 1px solid var(–border); border-radius: 8px; padding: 8px 16px; font-size: 12px; color: var(–text3); cursor: pointer; font-family: -apple-system, ‘Helvetica Neue’, Arial, sans-serif; margin-top: 8px; }
 
 /* MILESTONES */
 .timeline { position: relative; padding-left: 24px; }
@@ -184,7 +186,7 @@
 .milestone { position: relative; margin-bottom: 20px; }
 .milestone-dot { position: absolute; left: -20px; top: 16px; width: 12px; height: 12px; border-radius: 50%; border: 3px solid var(–bg); }
 .milestone-card { background: var(–surface); border: 1px solid var(–border); border-radius: 12px; padding: 14px; }
-.milestone-title { font-family: ‘Bebas Neue’; font-size: 18px; letter-spacing: 1px; margin-bottom: 10px; }
+.milestone-title { font-family: -apple-system, ‘SF Pro Display’, ‘Helvetica Neue’, Arial, sans-serif; font-size: 18px; letter-spacing: 1px; margin-bottom: 10px; font-weight: 800; }
 .milestone-target { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(–text2); padding: 4px 0; }
 .milestone-dot2 { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
 .adjust-item { padding: 10px 0; border-bottom: 1px solid var(–border); }
@@ -206,7 +208,7 @@
 .modal h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
 .modal p { font-size: 13px; color: var(–text2); line-height: 1.6; margin-bottom: 12px; }
 .modal ol { padding-left: 18px; font-size: 13px; color: var(–text2); line-height: 1.8; margin-bottom: 14px; }
-.modal-close { background: var(–surface2); border: none; border-radius: 10px; padding: 12px; width: 100%; font-size: 14px; color: var(–text); cursor: pointer; font-family: ‘DM Sans’; font-weight: 600; margin-top: 4px; }
+.modal-close { background: var(–surface2); border: none; border-radius: 10px; padding: 12px; width: 100%; font-size: 14px; color: var(–text); cursor: pointer; font-family: -apple-system, ‘Helvetica Neue’, Arial, sans-serif; font-weight: 600; margin-top: 4px; }
 .code-block { background: var(–bg); border: 1px solid var(–border); border-radius: 8px; padding: 10px; font-family: monospace; font-size: 11px; color: var(–green); margin: 8px 0; overflow-x: auto; white-space: nowrap; }
 
 @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
@@ -339,7 +341,7 @@
 
   <div id="tab-nutrition" class="section">
     <div class="macro-card">
-      <div style="font-family:'Bebas Neue';font-size:20px;color:var(--accent);letter-spacing:1px;margin-bottom:14px;">DAILY TARGETS — RECOMP</div>
+      <div style="font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:20px;color:var(--accent);letter-spacing:1px;margin-bottom:14px;">DAILY TARGETS — RECOMP</div>
       <div class="macro-row">
         <div class="macro-item"><div class="macro-val" style="color:var(--text)">2,350</div><div class="macro-lbl">CALORIES</div></div>
         <div class="macro-item"><div class="macro-val" style="color:var(--red)">180g</div><div class="macro-lbl">PROTEIN</div></div>
@@ -361,7 +363,7 @@
     </div>
 
 ```
-<div style="font-family:'Bebas Neue';font-size:18px;color:var(--text2);letter-spacing:1px;margin-bottom:10px;">DAILY INDIAN MEAL PLAN</div>
+<div style="font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:18px;color:var(--text2);letter-spacing:1px;margin-bottom:10px;">DAILY INDIAN MEAL PLAN</div>
 
 <div class="meal-card">
   <div class="meal-header">
@@ -467,7 +469,7 @@
   </div>
 </div>
 
-<div style="font-family:'Bebas Neue';font-size:18px;color:var(--text2);letter-spacing:1px;margin:16px 0 10px;">GOLDEN RULES</div>
+<div style="font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:18px;color:var(--text2);letter-spacing:1px;margin:16px 0 10px;">GOLDEN RULES</div>
 <div class="card" style="padding:0 16px">
   <div class="rule-item"><span class="rule-icon">✓</span>Hit 180g protein daily — everything else is secondary</div>
   <div class="rule-item"><span class="rule-icon">✓</span>Eat carbs before and after workouts; reduce them at dinner</div>
@@ -485,7 +487,7 @@
 
   <div id="tab-shopping" class="section">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <div style="font-family:'Bebas Neue';font-size:20px;letter-spacing:1px;">WEEKLY GROCERY LIST</div>
+      <div style="font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:20px;letter-spacing:1px;">WEEKLY GROCERY LIST</div>
       <button class="clear-checks-btn" onclick="clearChecks()">↺ Reset</button>
     </div>
     <div class="store-section">
@@ -552,7 +554,7 @@
     </div>
 
 ```
-<div style="font-family:'Bebas Neue';font-size:18px;color:var(--text2);letter-spacing:1px;margin:8px 0 12px;">COURSE CORRECTIONS</div>
+<div style="font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:18px;color:var(--text2);letter-spacing:1px;margin:8px 0 12px;">COURSE CORRECTIONS</div>
 <div class="card" style="padding:8px 16px">
   <div class="adjust-item"><div class="adjust-q">❓ Not losing fat (waist same after 4 weeks)?</div><div class="adjust-a">→ Drop to 2,150 kcal (–200). Keep protein the same, cut carbs.</div></div>
   <div class="adjust-item"><div class="adjust-q">❓ Strength stalling at Week 6–7?</div><div class="adjust-a">→ Take a 5-day deload at Week 7 (reduce weight 40%, keep movement).</div></div>
