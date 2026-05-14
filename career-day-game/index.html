@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="OTA Delivery" />
+<meta name="theme-color" content="#0B233F" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" type="image/svg+xml" href="icon.svg" />
+<link rel="apple-touch-icon" href="icon.svg" />
+<title>Rivian OTA Delivery</title>
+<style>
+:root {
+  --rivian-yellow: #FCE300;
+  --rivian-blue: #0B233F;
+  --rivian-light: #E8F1FC;
+  --accent-green: #7BC67E;
+  --danger: #FF6B6B;
+  --shadow: 0 8px 24px rgba(11, 35, 63, 0.2);
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Rounded", "Avenir Next", system-ui, sans-serif;
+  background: linear-gradient(180deg, #87CEEB 0%, #B0E0E6 60%, #E8F1FC 100%);
+  color: var(--rivian-blue);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  overscroll-behavior: none;
+}
+#app { width: 100vw; height: 100vh; position: relative; }
+.screen { position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; padding: 24px; }
+.screen.active { display: flex; }
+
+#startScreen, #endScreen { justify-content: center; }
+
+.title {
+  font-size: clamp(32px, 5.5vw, 56px);
+  font-weight: 900;
+  letter-spacing: -1px;
+  text-align: center;
+  margin: 0 0 4px;
+  color: var(--rivian-blue);
+}
+.subtitle {
+  font-size: clamp(15px, 2vw, 20px);
+  margin: 6px 0 24px;
+  color: var(--rivian-blue);
+  opacity: 0.75;
+  text-align: center;
+}
+.card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  width: min(560px, 92vw);
+  max-height: 80vh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+.input-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+.name-input {
+  flex: 1;
+  min-width: 0;
+  font-size: 18px;
+  padding: 14px 18px;
+  border: 2px solid var(--rivian-light);
+  border-radius: 14px;
+  outline: none;
+  font-family: inherit;
+  color: var(--rivian-blue);
+  touch-action: manipulation;
+  user-select: text;
+  -webkit-user-select: text;
+}
+.name-input:focus { border-color: var(--rivian-yellow); }
+.btn {
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 14px 24px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  background: var(--rivian-yellow);
+  color: var(--rivian-blue);
+  box-shadow: var(--shadow);
+  transition: transform 0.08s, box-shadow 0.08s;
+  touch-action: manipulation;
+}
+.btn:active { transform: translateY(2px); box-shadow: 0 4px 12px rgba(11,35,63,0.15); }
+.btn.secondary { background: var(--rivian-light); }
+.btn.big { font-size: 20px; padding: 16px 28px; }
+
+.leaderboard h3 { margin: 0 0 12px; font-size: 17px; }
+.leaderboard ol {
+  margin: 0; padding-left: 0; list-style: none; counter-reset: rank;
+}
+.leaderboard li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--rivian-light);
+  border-radius: 12px;
+  margin-bottom: 6px;
+  font-size: 16px;
+  counter-increment: rank;
+}
+.leaderboard li::before {
+  content: counter(rank);
+  font-weight: 800;
+  width: 28px;
+  text-align: center;
+  background: white;
+  border-radius: 8px;
+  padding: 2px 0;
+  font-size: 14px;
+}
+.leaderboard li .name { flex: 1; font-weight: 600; }
+.leaderboard li .time { font-variant-numeric: tabular-nums; font-weight: 700; }
+.leaderboard li.empty {
+  justify-content: center;
+  color: rgba(11,35,63,0.5);
+  font-style: italic;
+}
+.leaderboard li.empty::before { display: none; }
+.leaderboard li.you {
+  background: linear-gradient(90deg, #FFF59A, var(--rivian-yellow));
+}
+
+/* Game screen */
+#gameScreen { background: linear-gradient(180deg, #87CEEB 0%, #B0E0E6 70%, #C5E4A8 100%); padding: 0; }
+.hud {
+  position: absolute;
+  top: env(safe-area-inset-top, 0);
+  left: 0; right: 0;
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  z-index: 10;
+  pointer-events: none;
+}
+.hud-pill {
+  background: rgba(255,255,255,0.95);
+  border-radius: 16px;
+  padding: 10px 18px;
+  font-size: 18px;
+  font-weight: 700;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.hud-pill.danger { background: var(--danger); color: white; }
+.hud-quit {
+  pointer-events: auto;
+  background: rgba(255,255,255,0.95);
+  border: none;
+  border-radius: 16px;
+  width: 44px; height: 44px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--rivian-blue);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  touch-action: manipulation;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hud-quit:active { transform: translateY(2px); }
+canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+
+.instruction {
+  position: absolute;
+  bottom: max(24px, env(safe-area-inset-bottom, 24px));
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.95);
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: var(--shadow);
+  z-index: 10;
+  text-align: center;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  max-width: 90vw;
+}
+
+/* End screen */
+.result-time {
+  font-size: clamp(44px, 9vw, 84px);
+  font-weight: 900;
+  color: var(--rivian-blue);
+  margin: 4px 0;
+  font-variant-numeric: tabular-nums;
+}
+.result-breakdown {
+  font-size: 15px;
+  color: rgba(11,35,63,0.7);
+  margin: 0 0 22px;
+}
+.result-emoji { font-size: 56px; margin-bottom: 4px; }
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+.title-emoji { display: inline-block; animation: pulse 2s ease-in-out infinite; }
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- Start -->
+  <section id="startScreen" class="screen active">
+    <h1 class="title"><span class="title-emoji">☁️</span> &nbsp;→&nbsp; <span class="title-emoji">🚙</span></h1>
+    <h1 class="title">Rivian OTA Delivery</h1>
+    <p class="subtitle">Drag the update package from the cloud to the car — stay on the path!</p>
+    <div class="card">
+      <div class="input-row">
+        <input id="nameInput" class="name-input" placeholder="Your name" maxlength="14" autocomplete="off" />
+        <button id="startBtn" class="btn big">Start Delivery</button>
+      </div>
+      <div class="leaderboard">
+        <h3>🏆 Top Pilots (fastest first)</h3>
+        <ol id="scoresList"></ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- Game -->
+  <section id="gameScreen" class="screen">
+    <div class="hud">
+      <div class="hud-pill">⏱ <span id="timerDisplay">0.0s</span></div>
+      <button id="quitBtn" class="hud-quit" aria-label="Quit game">✕</button>
+      <div class="hud-pill" id="penaltyPill">⚡ <span id="penaltyDisplay">0</span>/10s</div>
+    </div>
+    <canvas id="gameCanvas"></canvas>
+    <div class="instruction" id="instruction">Touch the package 📦 and drag it to the car — stay on the yellow path!</div>
+  </section>
+
+  <!-- End -->
+  <section id="endScreen" class="screen">
+    <div class="card" style="text-align:center;">
+      <div class="result-emoji" id="resultEmoji">🎉</div>
+      <h2 id="resultTitle" style="margin:0 0 6px;">Delivered!</h2>
+      <p class="result-time" id="resultTime">0.0s</p>
+      <p class="result-breakdown" id="resultBreakdown"></p>
+      <div class="btn-row">
+        <button id="playAgainBtn" class="btn">Play Again</button>
+        <button id="backHomeBtn" class="btn secondary">Leaderboard</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function () {
+  // ----- Constants -----
+  const STORAGE_KEY = 'rivianOtaHighScores';
+  const MAX_STORED_SCORES = 100;
+  const MAX_PENALTY = 10;
+  const PATH_RADIUS = 50;       // px around the centerline that counts as "on path"
+  const PATH_SAMPLES = 220;
+  const FORWARD_CAP = 7;         // max indices progress can jump per frame (catch-up cap)
+  const BACK_WINDOW = 30;        // samples behind progress still considered on-path
+  const GRAB_RADIUS = 60;
+
+  // ----- Screens -----
+  const screens = {
+    start: document.getElementById('startScreen'),
+    game: document.getElementById('gameScreen'),
+    end: document.getElementById('endScreen'),
+  };
+  const show = (name) => Object.entries(screens).forEach(([k, el]) => el.classList.toggle('active', k === name));
+
+  // ----- High-score storage (safe in Private mode) -----
+  const loadScores = () => {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch { return []; }
+  };
+  const saveScores = (arr) => {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(arr.slice(0, MAX_STORED_SCORES))); }
+    catch (_) { /* storage unavailable — keep going in-memory only */ }
+  };
+  const addScore = (name, time) => {
+    const list = loadScores();
+    const entry = { name, time, date: Date.now() };
+    list.push(entry);
+    list.sort((a, b) => a.time - b.time);
+    saveScores(list);
+    return entry;
+  };
+  const renderLeaderboard = (highlight) => {
+    const list = loadScores();
+    const ol = document.getElementById('scoresList');
+    ol.innerHTML = '';
+    if (!list.length) {
+      const li = document.createElement('li');
+      li.className = 'empty';
+      li.textContent = 'No scores yet — be the first!';
+      ol.appendChild(li);
+      return;
+    }
+    list.slice(0, 10).forEach((e) => {
+      const li = document.createElement('li');
+      if (highlight && e.date === highlight.date && e.name === highlight.name) li.className = 'you';
+      const n = document.createElement('span'); n.className = 'name'; n.textContent = e.name;
+      const t = document.createElement('span'); t.className = 'time'; t.textContent = e.time.toFixed(1) + 's';
+      li.appendChild(n); li.appendChild(t);
+      ol.appendChild(li);
+    });
+  };
+
+  // ----- Audio (WebAudio, unlocked on first tap) -----
+  let audioCtx = null;
+  const ensureAudio = () => {
+    try {
+      if (!audioCtx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (AC) audioCtx = new AC();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    } catch (_) {}
+  };
+  const beep = (freq, dur, type = 'sine', vol = 0.16) => {
+    if (!audioCtx) return;
+    try {
+      const t0 = audioCtx.currentTime;
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = type;
+      o.frequency.setValueAtTime(freq, t0);
+      g.gain.setValueAtTime(vol, t0);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(t0); o.stop(t0 + dur + 0.02);
+    } catch (_) {}
+  };
+  const playPenalty = () => beep(220, 0.18, 'sawtooth', 0.12);
+  const playWin = () => {
+    [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => beep(f, 0.18, 'triangle', 0.16), i * 90));
+  };
+
+  // ----- Catmull-Rom interpolation -----
+  const catmullRom = (p0, p1, p2, p3, t) => {
+    const t2 = t * t, t3 = t2 * t;
+    return {
+      x: 0.5 * (2 * p1.x + (-p0.x + p2.x) * t + (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 + (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3),
+      y: 0.5 * (2 * p1.y + (-p0.y + p2.y) * t + (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 + (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3),
+    };
+  };
+
+  // Path is in NORMALIZED [0,1] coords so it scales correctly on rotation/resize.
+  const generatePath = () => {
+    const start = { x: 0.16, y: 0.22 };
+    const end = { x: 0.84, y: 0.78 };
+    const dx = end.x - start.x, dy = end.y - start.y;
+    const len = Math.hypot(dx, dy);
+    const perp = { x: -dy / len, y: dx / len };
+    const ctrl = [];
+    const num = 4;
+    for (let i = 0; i < num; i++) {
+      const t = (i + 1) / (num + 1);
+      const sign = (i % 2 === 0) ? 1 : -1;
+      const off = sign * (0.14 + Math.random() * 0.16);
+      let cx = start.x + dx * t + perp.x * off;
+      let cy = start.y + dy * t + perp.y * off;
+      cx = Math.max(0.10, Math.min(0.90, cx));
+      cy = Math.max(0.12, Math.min(0.88, cy));
+      ctrl.push({ x: cx, y: cy });
+    }
+    const pts = [start, ...ctrl, end];
+    const samples = [];
+    const segs = pts.length - 1;
+    for (let s = 0; s <= PATH_SAMPLES; s++) {
+      const u = (s / PATH_SAMPLES) * segs;
+      const i = Math.floor(u);
+      const t = u - i;
+      const p0 = pts[Math.max(0, i - 1)];
+      const p1 = pts[i];
+      const p2 = pts[Math.min(pts.length - 1, i + 1)];
+      const p3 = pts[Math.min(pts.length - 1, i + 2)];
+      samples.push(catmullRom(p0, p1, p2, p3, t));
+    }
+    return { samples, start, end };
+  };
+
+  // ----- Canvas + state -----
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  let W = 0, H = 0;
+  let state = null;
+  let loopId = null;             // single source of truth for rAF — prevents loop doubling
+
+  const resize = () => {
+    const DPR = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    W = rect.width; H = rect.height;
+    canvas.width = W * DPR;
+    canvas.height = H * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  };
+  window.addEventListener('resize', () => {
+    if (screens.game.classList.contains('active')) resize();
+  });
+  window.addEventListener('orientationchange', () => {
+    if (screens.game.classList.contains('active')) setTimeout(resize, 200);
+  });
+
+  const startGame = (playerName) => {
+    if (loopId !== null) { cancelAnimationFrame(loopId); loopId = null; }
+    show('game');
+    requestAnimationFrame(() => {
+      resize();
+      const p = generatePath();
+      state = {
+        playerName,
+        path: p.samples,
+        startPt: p.start,
+        endPt: p.end,
+        progress: 0,
+        finger: null,
+        dragging: false,
+        wasInBounds: true,
+        justGrabbed: false,
+        penalties: 0,
+        startedAt: 0,
+        endedAt: 0,
+        started: false,
+        finished: false,
+        sparkles: [],
+        confetti: [],
+        pointerId: null,
+      };
+      document.getElementById('timerDisplay').textContent = '0.0s';
+      document.getElementById('penaltyDisplay').textContent = '0';
+      document.getElementById('penaltyPill').classList.remove('danger');
+      const instr = document.getElementById('instruction');
+      instr.textContent = 'Touch the package 📦 and drag it along the yellow path to the car!';
+      instr.style.opacity = '1';
+      loopId = requestAnimationFrame(loop);
+    });
+  };
+
+  const endGame = () => {
+    if (state.finished) return;
+    state.finished = true;
+    state.endedAt = performance.now();
+    const elapsed = (state.endedAt - state.startedAt) / 1000;
+    const total = elapsed + state.penalties;
+    const entry = addScore(state.playerName, total);
+    document.getElementById('resultTime').textContent = total.toFixed(1) + 's';
+    document.getElementById('resultBreakdown').textContent =
+      `Drive time: ${elapsed.toFixed(1)}s  •  Penalty: +${state.penalties}s`;
+    let emoji = '🎉', title = `Delivered, ${state.playerName}!`;
+    if (state.penalties === 0 && total < 10) { emoji = '🏆'; title = `Perfect run, ${state.playerName}!`; }
+    else if (state.penalties === 0) { emoji = '✨'; title = `Flawless path, ${state.playerName}!`; }
+    else if (state.penalties >= MAX_PENALTY) { emoji = '😅'; title = `Bumpy ride, ${state.playerName}!`; }
+    document.getElementById('resultEmoji').textContent = emoji;
+    document.getElementById('resultTitle').textContent = title;
+    renderLeaderboard(entry);
+    playWin();
+    // confetti burst from the car
+    const carPx = { x: state.endPt.x * W, y: state.endPt.y * H };
+    for (let i = 0; i < 50; i++) {
+      state.confetti.push({
+        x: carPx.x, y: carPx.y,
+        vx: (Math.random() - 0.5) * 9, vy: -3 - Math.random() * 7,
+        life: 1, color: ['#FCE300','#7BC67E','#0B233F','#FF6B6B','#88B8E0'][i % 5],
+        size: 4 + Math.random() * 5, rot: Math.random() * Math.PI,
+      });
+    }
+    setTimeout(() => show('end'), 800);
+  };
+
+  // ----- Pointer events -----
+  const getPos = (e) => {
+    const r = canvas.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  };
+  canvas.addEventListener('pointerdown', (e) => {
+    if (!state || state.finished) return;
+    e.preventDefault();
+    ensureAudio();
+    const pos = getPos(e);
+    const pkg = state.path[state.progress];
+    const pkgX = pkg.x * W, pkgY = pkg.y * H;
+    if (Math.hypot(pos.x - pkgX, pos.y - pkgY) <= GRAB_RADIUS) {
+      state.finger = pos;
+      state.dragging = true;
+      state.wasInBounds = true;
+      state.justGrabbed = true;   // grace frame: no penalty until they actually move
+      state.pointerId = e.pointerId;
+      try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+    }
+  });
+  canvas.addEventListener('pointermove', (e) => {
+    if (!state || !state.dragging) return;
+    if (state.pointerId !== null && e.pointerId !== state.pointerId) return;
+    e.preventDefault();
+    state.finger = getPos(e);
+    if (!state.started) {
+      state.started = true;
+      state.startedAt = performance.now();
+      document.getElementById('instruction').style.opacity = '0';
+    }
+  });
+  const release = (e) => {
+    if (!state) return;
+    if (state.pointerId !== null && e.pointerId !== state.pointerId) return;
+    state.dragging = false;
+    state.finger = null;
+    state.pointerId = null;
+    try { canvas.releasePointerCapture(e.pointerId); } catch (_) {}
+  };
+  canvas.addEventListener('pointerup', release);
+  canvas.addEventListener('pointercancel', release);
+
+  // ----- Geometry helpers -----
+  const nearestIdx = (fx, fy, fromIdx, toIdx) => {
+    let best = Infinity, bestIdx = fromIdx;
+    for (let i = fromIdx; i <= toIdx; i++) {
+      const p = state.path[i];
+      const dx = fx - p.x * W, dy = fy - p.y * H;
+      const d = dx * dx + dy * dy;
+      if (d < best) { best = d; bestIdx = i; }
+    }
+    return { idx: bestIdx, dist: Math.sqrt(best) };
+  };
+
+  // ----- Main loop -----
+  const loop = (now) => {
+    if (!state) { loopId = null; return; }
+    if (state.started && !state.finished) {
+      const elapsed = (now - state.startedAt) / 1000;
+      document.getElementById('timerDisplay').textContent = elapsed.toFixed(1) + 's';
+
+      if (state.dragging && state.finger) {
+        const fromIdx = Math.max(0, state.progress - BACK_WINDOW);
+        const toIdx = state.path.length - 1;
+        const { idx, dist } = nearestIdx(state.finger.x, state.finger.y, fromIdx, toIdx);
+
+        if (dist <= PATH_RADIUS) {
+          if (idx > state.progress) {
+            state.progress = Math.min(idx, state.progress + FORWARD_CAP);
+          }
+          state.wasInBounds = true;
+        } else {
+          if (state.wasInBounds && !state.justGrabbed && state.penalties < MAX_PENALTY) {
+            state.penalties++;
+            document.getElementById('penaltyDisplay').textContent = state.penalties;
+            if (state.penalties >= MAX_PENALTY) {
+              document.getElementById('penaltyPill').classList.add('danger');
+            }
+            playPenalty();
+          }
+          state.wasInBounds = false;
+        }
+        state.justGrabbed = false;
+
+        if (Math.random() < 0.45) {
+          const pt = state.path[state.progress];
+          state.sparkles.push({
+            x: pt.x * W + (Math.random() - 0.5) * 22,
+            y: pt.y * H + (Math.random() - 0.5) * 22,
+            r: 2 + Math.random() * 3, life: 1,
+            vx: (Math.random() - 0.5) * 0.6, vy: (Math.random() - 0.5) * 0.6,
+          });
+        }
+      }
+      state.sparkles = state.sparkles.filter((s) => {
+        s.life -= 0.04; s.x += s.vx; s.y += s.vy; return s.life > 0;
+      });
+      if (state.progress >= state.path.length - 2) endGame();
+    }
+    state.confetti.forEach((c) => { c.vy += 0.25; c.x += c.vx; c.y += c.vy; c.rot += 0.1; c.life -= 0.012; });
+    state.confetti = state.confetti.filter((c) => c.life > 0);
+
+    render(now);
+    loopId = requestAnimationFrame(loop);
+  };
+
+  // ----- Drawing -----
+  const roundRect = (x, y, w, h, r) => {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  };
+  const drawCloud = (x, y, scale, t) => {
+    ctx.save();
+    ctx.translate(x, y);
+    const bob = Math.sin(t / 600) * 2;
+    ctx.translate(0, bob);
+    ctx.scale(scale, scale);
+    ctx.fillStyle = '#ffffff';
+    ctx.strokeStyle = 'rgba(11,35,63,0.18)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(-26, 4, 22, 0, Math.PI * 2);
+    ctx.arc(-2, -12, 26, 0, Math.PI * 2);
+    ctx.arc(24, 0, 22, 0, Math.PI * 2);
+    ctx.arc(2, 14, 20, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = '#0B233F';
+    ctx.font = 'bold 13px -apple-system, system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText('CLOUD', 0, 5);
+    ctx.restore();
+  };
+  const drawCar = (x, y, scale) => {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(scale, scale);
+    ctx.fillStyle = 'rgba(11,35,63,0.15)';
+    ctx.beginPath(); ctx.ellipse(0, 28, 56, 6, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#1A3A6B';
+    roundRect(-52, -22, 104, 38, 14); ctx.fill();
+    ctx.fillStyle = '#A8D0F0';
+    roundRect(-34, -34, 64, 20, 7); ctx.fill();
+    ctx.fillStyle = '#1A3A6B';
+    ctx.fillRect(-3, -34, 4, 20);
+    ctx.fillStyle = '#FCE300';
+    roundRect(36, -10, 18, 5, 2.5); ctx.fill();
+    ctx.fillStyle = '#FFFCE0';
+    ctx.beginPath(); ctx.ellipse(45, -8, 4, 4, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(40, -3, 3, 3, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(0, -18); ctx.lineTo(0, 14); ctx.stroke();
+    ctx.fillStyle = '#1a1a1a';
+    ctx.beginPath(); ctx.arc(-30, 18, 11, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(30, 18, 11, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#888';
+    ctx.beginPath(); ctx.arc(-30, 18, 5, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(30, 18, 5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#FCE300';
+    ctx.font = 'bold 16px -apple-system, system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText('R', -20, 3);
+    ctx.restore();
+  };
+  const drawPackage = (x, y, t, pulse) => {
+    ctx.save();
+    ctx.translate(x, y);
+    const wob = Math.sin(t / 220) * 2;
+    ctx.translate(0, wob);
+    const haloR = pulse ? 30 + Math.sin(t / 220) * 8 : 22;
+    const g = ctx.createRadialGradient(0, 0, 6, 0, 0, haloR);
+    g.addColorStop(0, 'rgba(252,227,0,0.75)');
+    g.addColorStop(1, 'rgba(252,227,0,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(0, 0, haloR, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#FCE300';
+    ctx.strokeStyle = '#0B233F';
+    ctx.lineWidth = 2;
+    roundRect(-15, -15, 30, 30, 6); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#0B233F';
+    ctx.fillRect(-15, -2.5, 30, 3);
+    ctx.fillRect(-1.5, -15, 3, 30);
+    ctx.fillStyle = '#FCE300';
+    ctx.font = 'bold 8px -apple-system, system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText('OTA', 0, 12);
+    ctx.restore();
+  };
+  const drawTapHint = (x, y, t) => {
+    const bob = Math.sin(t / 220) * 4;
+    ctx.save();
+    ctx.translate(x, y - 56 + bob);
+    ctx.fillStyle = 'rgba(11,35,63,0.92)';
+    const w = 130, h = 28;
+    roundRect(-w / 2, -h / 2, w, h, 14); ctx.fill();
+    ctx.fillStyle = '#FCE300';
+    ctx.font = 'bold 15px -apple-system, system-ui';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('👆 Tap to start!', 0, 1);
+    ctx.restore();
+  };
+
+  const render = (t) => {
+    ctx.clearRect(0, 0, W, H);
+    const gg = ctx.createLinearGradient(0, H * 0.6, 0, H);
+    gg.addColorStop(0, 'rgba(123,198,126,0)');
+    gg.addColorStop(1, 'rgba(123,198,126,0.55)');
+    ctx.fillStyle = gg;
+    ctx.fillRect(0, 0, W, H);
+
+    if (!state) return;
+
+    // boundary corridor
+    ctx.strokeStyle = 'rgba(252,227,0,0.32)';
+    ctx.lineWidth = PATH_RADIUS * 2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    state.path.forEach((p, i) => {
+      const x = p.x * W, y = p.y * H;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // dashed centerline
+    ctx.strokeStyle = 'rgba(11,35,63,0.45)';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([10, 10]);
+    ctx.beginPath();
+    state.path.forEach((p, i) => {
+      const x = p.x * W, y = p.y * H;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // traveled
+    if (state.progress > 0) {
+      ctx.strokeStyle = 'rgba(123,198,126,0.95)';
+      ctx.lineWidth = 8;
+      ctx.beginPath();
+      for (let i = 0; i <= state.progress; i++) {
+        const p = state.path[i];
+        const x = p.x * W, y = p.y * H;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+
+    drawCloud(state.startPt.x * W, state.startPt.y * H, 1.25, t);
+    drawCar(state.endPt.x * W, state.endPt.y * H, 1.15);
+
+    state.sparkles.forEach((s) => {
+      ctx.fillStyle = `rgba(252,227,0,${s.life})`;
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r * s.life, 0, Math.PI * 2); ctx.fill();
+    });
+
+    const pkg = state.path[state.progress];
+    const pkgX = pkg.x * W, pkgY = pkg.y * H;
+    drawPackage(pkgX, pkgY, t, !state.started);
+    if (!state.started) drawTapHint(pkgX, pkgY, t);
+
+    if (state.dragging && state.finger && !state.wasInBounds) {
+      ctx.strokeStyle = 'rgba(255,107,107,0.85)';
+      ctx.lineWidth = 3;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.arc(state.finger.x, state.finger.y, 20, 0, Math.PI * 2); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    state.confetti.forEach((c) => {
+      ctx.save();
+      ctx.translate(c.x, c.y); ctx.rotate(c.rot);
+      ctx.fillStyle = c.color;
+      ctx.globalAlpha = Math.max(0, c.life);
+      ctx.fillRect(-c.size / 2, -c.size / 2, c.size, c.size);
+      ctx.restore();
+    });
+  };
+
+  // ----- UI wiring -----
+  document.getElementById('startBtn').addEventListener('click', () => {
+    ensureAudio();
+    const raw = document.getElementById('nameInput').value.trim();
+    const name = raw.length ? raw.slice(0, 14) : 'Pilot';
+    startGame(name);
+  });
+  document.getElementById('nameInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('startBtn').click();
+  });
+  document.getElementById('playAgainBtn').addEventListener('click', () => {
+    const name = state ? state.playerName : 'Pilot';
+    startGame(name);
+  });
+  document.getElementById('backHomeBtn').addEventListener('click', () => {
+    if (loopId !== null) { cancelAnimationFrame(loopId); loopId = null; }
+    state = null;
+    renderLeaderboard();
+    show('start');
+  });
+  document.getElementById('quitBtn').addEventListener('click', () => {
+    if (loopId !== null) { cancelAnimationFrame(loopId); loopId = null; }
+    state = null;
+    renderLeaderboard();
+    show('start');
+  });
+
+  // Prevent iOS double-tap zoom
+  let lastTouch = 0;
+  document.addEventListener('touchend', (e) => {
+    const now = Date.now();
+    if (now - lastTouch < 350) e.preventDefault();
+    lastTouch = now;
+  }, { passive: false });
+
+  renderLeaderboard();
+
+  // Service worker: cache all assets so the game works offline after first load
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+  }
+})();
+</script>
+</body>
+</html>
