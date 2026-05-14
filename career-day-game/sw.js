@@ -1,4 +1,4 @@
-const CACHE = 'rivian-ota-v1';
+const CACHE = 'rivian-ota-v7';
 const ASSETS = [
   './',
   './index.html',

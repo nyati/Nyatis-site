@@ -53,7 +53,10 @@ body {
   text-align: center;
 }
 .card {
-  background: #fff;
+  background:
+    linear-gradient(to bottom, rgba(255,255,255,0), #fff 75%) bottom / 100% 36px no-repeat local,
+    linear-gradient(to top, rgba(11,35,63,0.12), rgba(11,35,63,0)) bottom / 100% 14px no-repeat scroll,
+    #fff;
   border-radius: 24px;
   padding: 24px;
   box-shadow: var(--shadow);
@@ -99,10 +102,90 @@ body {
   touch-action: manipulation;
 }
 .btn:active { transform: translateY(2px); box-shadow: 0 4px 12px rgba(11,35,63,0.15); }
+.btn:disabled { opacity: 0.4; cursor: default; }
+.btn:disabled:active { transform: none; box-shadow: var(--shadow); }
 .btn.secondary { background: var(--rivian-light); }
+.btn.danger { background: var(--danger); color: white; }
 .btn.big { font-size: 20px; padding: 16px 28px; }
+.hint {
+  margin: -8px 0 16px;
+  font-size: 14px;
+  font-style: italic;
+  color: rgba(11,35,63,0.55);
+  text-align: center;
+  min-height: 18px;
+  transition: opacity 0.2s;
+}
+.hint.is-hidden { opacity: 0; }
 
-.leaderboard h3 { margin: 0 0 12px; font-size: 17px; }
+/* Modal */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(11,35,63,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 24px;
+}
+.modal[hidden] { display: none; }
+.modal-card {
+  background: white;
+  border-radius: 20px;
+  padding: 28px 24px 22px;
+  width: min(360px, 92vw);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+.modal-msg { margin: 0 0 22px; font-size: 17px; font-weight: 600; line-height: 1.4; }
+.modal-actions { display: flex; gap: 10px; justify-content: center; }
+
+.how-to-play {
+  margin-bottom: 20px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--rivian-light);
+}
+.how-to-play h3 { margin: 0 0 10px; font-size: 17px; }
+.how-to-play ul { margin: 0; padding: 0; list-style: none; }
+.how-to-play li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 0;
+  font-size: 14px;
+  line-height: 1.35;
+}
+.step-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.leaderboard h3 { margin: 0; font-size: 17px; }
+.leaderboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.btn-text {
+  background: transparent;
+  border: 1px solid transparent;
+  color: rgba(11,35,63,0.55);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 8px;
+  touch-action: manipulation;
+}
+.btn-text:active { background: rgba(255,107,107,0.12); color: var(--danger); transform: translateY(1px); }
+.btn-text:disabled { opacity: 0.35; cursor: default; }
 .leaderboard ol {
   margin: 0; padding-left: 0; list-style: none; counter-reset: rank;
 }
@@ -232,14 +315,27 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; }
   <section id="startScreen" class="screen active">
     <h1 class="title"><span class="title-emoji">☁️</span> &nbsp;→&nbsp; <span class="title-emoji">🚙</span></h1>
     <h1 class="title">Rivian OTA Delivery</h1>
-    <p class="subtitle">Drag the update package from the cloud to the car — stay on the path!</p>
+    <p class="subtitle">A cloud-to-car delivery game</p>
     <div class="card">
+      <div class="how-to-play">
+        <h3>How to play</h3>
+        <ul>
+          <li><span class="step-icon">📦</span> Drag the package from the cloud ☁️ to the Rivian 🚙</li>
+          <li><span class="step-icon">🟡</span> Stay inside the yellow path the whole way</li>
+          <li><span class="step-icon">⚡</span> Going outside adds <strong>+1 second</strong> each time (max +10s)</li>
+          <li><span class="step-icon">🏆</span> Fastest total time wins — beat the leaderboard!</li>
+        </ul>
+      </div>
       <div class="input-row">
         <input id="nameInput" class="name-input" placeholder="Your name" maxlength="14" autocomplete="off" />
-        <button id="startBtn" class="btn big">Start Delivery</button>
+        <button id="startBtn" class="btn big" disabled>Start Delivery</button>
       </div>
+      <p id="nameHint" class="hint">Type your name to start</p>
       <div class="leaderboard">
-        <h3>🏆 Top Pilots (fastest first)</h3>
+        <div class="leaderboard-header">
+          <h3>🏆 Top Pilots (fastest first)</h3>
+          <button id="clearScoresBtn" class="btn-text" type="button">🗑 Clear</button>
+        </div>
         <ol id="scoresList"></ol>
       </div>
     </div>
@@ -264,11 +360,20 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; }
       <p class="result-time" id="resultTime">0.0s</p>
       <p class="result-breakdown" id="resultBreakdown"></p>
       <div class="btn-row">
-        <button id="playAgainBtn" class="btn">Play Again</button>
-        <button id="backHomeBtn" class="btn secondary">Leaderboard</button>
+        <button id="playAgainBtn" class="btn big">Play Again</button>
       </div>
     </div>
   </section>
+
+  <div id="modal" class="modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalMsg">
+      <p id="modalMsg" class="modal-msg"></p>
+      <div class="modal-actions">
+        <button id="modalCancel" class="btn">Cancel</button>
+        <button id="modalConfirm" class="btn danger">Yes, clear</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -312,6 +417,8 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; }
     const list = loadScores();
     const ol = document.getElementById('scoresList');
     ol.innerHTML = '';
+    const clearBtn = document.getElementById('clearScoresBtn');
+    if (clearBtn) clearBtn.disabled = list.length === 0;
     if (!list.length) {
       const li = document.createElement('li');
       li.className = 'empty';
@@ -780,30 +887,69 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; }
   };
 
   // ----- UI wiring -----
-  document.getElementById('startBtn').addEventListener('click', () => {
+  const startBtn = document.getElementById('startBtn');
+  const nameInput = document.getElementById('nameInput');
+  const nameHint = document.getElementById('nameHint');
+  const updateStartBtnState = () => {
+    const empty = nameInput.value.trim().length === 0;
+    startBtn.disabled = empty;
+    nameHint.classList.toggle('is-hidden', !empty);
+  };
+  nameInput.addEventListener('input', updateStartBtnState);
+  startBtn.addEventListener('click', () => {
     ensureAudio();
-    const raw = document.getElementById('nameInput').value.trim();
-    const name = raw.length ? raw.slice(0, 14) : 'Pilot';
-    startGame(name);
+    const raw = nameInput.value.trim();
+    if (!raw.length) return;
+    startGame(raw.slice(0, 14));
   });
-  document.getElementById('nameInput').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') document.getElementById('startBtn').click();
+  nameInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !startBtn.disabled) startBtn.click();
   });
-  document.getElementById('playAgainBtn').addEventListener('click', () => {
-    const name = state ? state.playerName : 'Pilot';
-    startGame(name);
-  });
-  document.getElementById('backHomeBtn').addEventListener('click', () => {
+  const goToStart = () => {
     if (loopId !== null) { cancelAnimationFrame(loopId); loopId = null; }
     state = null;
+    nameInput.value = '';
+    updateStartBtnState();
     renderLeaderboard();
     show('start');
+  };
+  document.getElementById('playAgainBtn').addEventListener('click', goToStart);
+  document.getElementById('quitBtn').addEventListener('click', goToStart);
+
+  // Custom in-page confirm (works reliably across iOS PWA versions where native confirm() can be flaky)
+  const askConfirm = (message, confirmLabel = 'Yes, clear') => new Promise((resolve) => {
+    const modal = document.getElementById('modal');
+    const cancelBtn = document.getElementById('modalCancel');
+    const okBtn = document.getElementById('modalConfirm');
+    document.getElementById('modalMsg').textContent = message;
+    okBtn.textContent = confirmLabel;
+    modal.hidden = false;
+    const cleanup = (val) => {
+      modal.hidden = true;
+      cancelBtn.removeEventListener('click', onCancel);
+      okBtn.removeEventListener('click', onOk);
+      modal.removeEventListener('click', onOverlay);
+      document.removeEventListener('keydown', onKey);
+      resolve(val);
+    };
+    const onCancel = () => cleanup(false);
+    const onOk = () => cleanup(true);
+    const onOverlay = (e) => { if (e.target === modal) cleanup(false); };
+    const onKey = (e) => {
+      if (e.key === 'Escape') cleanup(false);
+    };
+    cancelBtn.addEventListener('click', onCancel);
+    okBtn.addEventListener('click', onOk);
+    modal.addEventListener('click', onOverlay);
+    document.addEventListener('keydown', onKey);
   });
-  document.getElementById('quitBtn').addEventListener('click', () => {
-    if (loopId !== null) { cancelAnimationFrame(loopId); loopId = null; }
-    state = null;
+
+  document.getElementById('clearScoresBtn').addEventListener('click', async () => {
+    if (!loadScores().length) return;
+    const ok = await askConfirm('Clear all scores? This can’t be undone.');
+    if (!ok) return;
+    try { localStorage.removeItem(STORAGE_KEY); } catch (_) {}
     renderLeaderboard();
-    show('start');
   });
 
   // Prevent iOS double-tap zoom
